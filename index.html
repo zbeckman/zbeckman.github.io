@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Zach Beckman, mechanical engineering portfolio: six hardware projects from Ohio State.">
+<title>Zach Beckman Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout concept: an engineering drawing set on grid paper. Each project is a sheet with a
+   drawing-style title block; a sheet index opens the set, like the first page of a real drawing package. */
+:root {
+  --paper: #FAFAF8;
+  --grid: rgba(20, 24, 20, 0.055);
+  --ink: #111311;
+  --muted: #5E655F;
+  --line: #D4D7D3;
+  --surface: #FFFFFF;
+  --plate: #EDEFEC;
+  --accent: #1F7A47;
+  --accent-soft: rgba(31, 122, 71, 0.09);
+  --scrim: rgba(9, 13, 18, 0.94);
+  --scrim-ink: #EEF2F5;
+
+  --f-display: "IBM Plex Sans Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0F1110; --grid: rgba(255, 255, 255, 0.045); --ink: #ECEFEC; --muted: #9AA29C;
+    --line: #2C322E; --surface: #161A17; --plate: #1D221F; --accent: #4CC27E;
+    --accent-soft: rgba(76, 194, 126, 0.12); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0F1110; --grid: rgba(255, 255, 255, 0.045); --ink: #ECEFEC; --muted: #9AA29C;
+  --line: #2C322E; --surface: #161A17; --plate: #1D221F; --accent: #4CC27E;
+  --accent-soft: rgba(76, 194, 126, 0.12); color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1160px; margin: 0 auto; }
+
+/* ---------- shared bits ---------- */
+.mono { font-family: var(--f-mono); }
+.label {
+  font-family: var(--f-mono); font-size: 12px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+}
+.status { font-family: var(--f-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+.status::before { content: ""; width: 8px; height: 8px; background: var(--ink); }
+.status.wip { color: var(--accent); }
+.status.wip::before { background: var(--accent); }
+
+/* title block, the drawing-sheet table in the corner of every engineering drawing */
+.tb {
+  display: grid; grid-template-columns: max-content minmax(0, 1fr);
+  border: 1.5px solid var(--ink); background: var(--surface);
+  font-family: var(--f-mono); font-size: 12.5px; line-height: 1.45; margin: 0;
+}
+.tb dt, .tb dd { padding: 7px 12px; border-bottom: 1px solid var(--line); margin: 0; }
+.tb dt { color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-size: 11px; border-right: 1px solid var(--line); padding-top: 9px; }
+.tb dd { color: var(--ink); min-width: 0; overflow-wrap: anywhere; }
+.tb dt:nth-last-of-type(1), .tb dd:nth-last-of-type(1) { border-bottom: 0; }
+
+/* ---------- cover ---------- */
+.cover { padding-block: 64px 56px; }
+.cover-top { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 48px; align-items: end; }
+.cover .label { color: var(--accent); }
+.cover h1 {
+  font-family: var(--f-display); font-weight: 700; text-transform: uppercase;
+  font-size: clamp(3.2rem, 9vw, 6.6rem); line-height: 0.9; letter-spacing: -0.01em;
+  margin: 14px 0 22px; text-wrap: balance;
+}
+.lede { font-size: 1.08rem; max-width: 60ch; color: var(--ink); margin: 0; }
+.lede strong { font-weight: 600; }
+
+.index { margin-top: 56px; }
+.index-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; border-bottom: 1.5px solid var(--ink); padding-bottom: 8px; }
+.index ol { list-style: none; margin: 0; padding: 0; }
+.index li a {
+  display: grid; grid-template-columns: 72px minmax(0, 1.4fr) minmax(0, 1fr) 120px; gap: 16px; align-items: baseline;
+  padding: 14px 4px; border-bottom: 1px solid var(--line); color: inherit; text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+.index li a:hover { background: var(--accent-soft); }
+.index li a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.idx-n { font-family: var(--f-mono); font-size: 13px; color: var(--accent); font-weight: 500; }
+.idx-t { font-family: var(--f-display); font-weight: 600; font-size: 1.3rem; text-transform: uppercase; line-height: 1.15; }
+.idx-d { color: var(--muted); font-size: 0.92rem; }
+.idx-s { justify-self: end; }
+
+/* ---------- sheets ---------- */
+.sheet { border-top: 1.5px solid var(--ink); padding-block: 56px 72px; scroll-margin-top: 16px; }
+.sheet-meta { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; margin-bottom: 22px; }
+.sheet-meta .label b { color: var(--accent); font-weight: 500; }
+.sheet-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 44px; align-items: start; }
+
+.hero { margin: 0; position: sticky; top: calc(16px + env(safe-area-inset-top, 0px)); }
+.hero .shot { aspect-ratio: 4 / 5; border: 1.5px solid var(--ink); }
+.hero figcaption { margin-top: 8px; }
+
+.sheet h2 {
+  font-family: var(--f-display); font-weight: 700; text-transform: uppercase;
+  font-size: clamp(2.1rem, 4.6vw, 3.3rem); line-height: 0.95; margin: 0 0 14px; text-wrap: balance;
+}
+.summary { font-size: 1.1rem; margin: 0 0 26px; max-width: 58ch; }
+.copy { display: grid; gap: 22px; margin-top: 30px; max-width: 64ch; }
+.copy h3 { margin: 0 0 6px; }
+.copy p { margin: 0; }
+.copy ul { margin: 0; padding-left: 18px; display: grid; gap: 8px; }
+.copy li::marker { color: var(--accent); }
+.result {
+  border: 1.5px solid var(--ink); background: var(--surface);
+  padding: 14px 16px; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 14px;
+}
+.result .label { color: var(--accent); padding-top: 3px; }
+.result p { margin: 0; }
+
+/* process strips: real sequences, so the numbers carry order */
+.strip { margin-top: 46px; }
+.strip-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; }
+.strip-head::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.strip ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+.strip figure { margin: 0; }
+.strip .shot { aspect-ratio: 4 / 3; border: 1px solid var(--line); }
+.strip figcaption { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px; margin-top: 8px; font-size: 0.86rem; line-height: 1.4; color: var(--muted); }
+.strip figcaption b { font-family: var(--f-mono); font-weight: 500; font-size: 12px; color: var(--accent); padding-top: 1px; }
+.strip.software ol { grid-template-columns: minmax(0, 0.55fr) minmax(0, 1fr) minmax(0, 1fr); }
+
+/* images as zoom buttons */
+.shot {
+  display: block; width: 100%; max-width: 100%; padding: 0; margin: 0; cursor: zoom-in;
+  background: var(--plate); overflow: hidden; position: relative;
+}
+.shot img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.35s ease; }
+.shot.contain img { object-fit: contain; padding: 8px; }
+.shot:hover img { transform: scale(1.025); }
+.shot:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* ---------- video clips ---------- */
+.clip { margin: 0; }
+.clip .label { display: block; margin-bottom: 8px; }
+.clip video { display: block; width: 100%; max-width: 100%; background: var(--plate); border: 1.5px solid var(--ink); }
+.clip.tall video { max-width: 340px; aspect-ratio: 9 / 16; object-fit: cover; }
+.clip.wide video { aspect-ratio: 16 / 9; object-fit: cover; }
+.clip figcaption { margin-top: 8px; font-size: 0.86rem; color: var(--muted); }
+
+/* ---------- footer ---------- */
+.end { border-top: 1.5px solid var(--ink); padding-block: 26px 56px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+/* ---------- lightbox ---------- */
+.lb { position: fixed; inset: 0; z-index: 50; background: var(--scrim); display: grid; grid-template-rows: minmax(0, 1fr) auto;
+  padding: calc(18px + env(safe-area-inset-top, 0px)) max(18px, env(safe-area-inset-right, 0px)) calc(18px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px)); }
+.lb img { width: 100%; height: 100%; object-fit: contain; min-height: 0; }
+.lb-bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 12px; color: var(--scrim-ink); font-family: var(--f-mono); font-size: 13px; }
+.lb button { font: inherit; color: var(--scrim-ink); background: transparent; border: 1px solid var(--scrim-ink); padding: 8px 14px; cursor: pointer; flex-shrink: 0; }
+.lb button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 900px) {
+  .cover-top { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .sheet-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .hero { position: static; }
+  .hero .shot { aspect-ratio: 4 / 3; }
+  .index li a { grid-template-columns: 48px minmax(0, 1fr) auto; }
+  .idx-d { display: none; }
+  .strip.software ol { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+}
+@media (max-width: 520px) {
+  .cover { padding-block: 36px 40px; }
+  .sheet { padding-block: 40px 52px; }
+  .index li a { grid-template-columns: 34px minmax(0, 1fr); }
+  .idx-s { grid-column: 2; justify-self: start; }
+  .strip ol { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .sheet-meta { flex-direction: column; gap: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shot img, .index li a { transition: none; }
+  .shot:hover img { transform: none; }
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <div class="cover-top">
+    <div>
+      <div class="label">Design &amp; fabrication portfolio</div>
+      <h1>Zach Beckman</h1>
+      <p class="lede">I design and build hardware that gets used. Most of my work runs the same loop: find the problem, model a solution, fabricate it, learn what the model got wrong, and revise until it works. I'm the <strong>Projects Specialist Lead</strong> at Ohio State's makerspace, where I scope improvement projects for the space and either build them myself or lead other student employees through them.</p>
+    </div>
+    <dl class="tb" aria-label="About">
+      <dt>Program</dt><dd>B.S. Mechanical Engineering</dd>
+      <dt>School</dt><dd>The Ohio State University</dd>
+      <dt>GPA</dt><dd>4.0 / 4.0</dd>
+      <dt>Graduation</dt><dd>May 2028</dd>
+      <dt>Current</dt><dd>Engineering Intern, ENGIE North America</dd>
+      <dt>CAD</dt><dd>Onshape, SolidWorks</dd>
+    </dl>
+  </div>
+
+  <nav class="index" aria-label="Projects">
+    <div class="index-head"><span class="label">Sheet index</span><span class="label">6 sheets</span></div>
+    <ol>
+      <li><a href="#access-control"><span class="idx-n">01</span><span class="idx-t">Makerspace Access Control</span><span class="idx-d">Embedded hardware, kiosk software</span><span class="idx-s status wip">In progress</span></a></li>
+      <li><a href="#garden-robot"><span class="idx-n">02</span><span class="idx-t">Omnidirectional Garden Robot</span><span class="idx-d">Robotics, controls</span><span class="idx-s status">Complete</span></a></li>
+      <li><a href="#ballista"><span class="idx-n">03</span><span class="idx-t">Aimable Ballista</span><span class="idx-d">Mechanisms, printed gear trains</span><span class="idx-s status">Complete</span></a></li>
+      <li><a href="#partition"><span class="idx-n">04</span><span class="idx-t">Makerspace Partition</span><span class="idx-d">Structures, cost-driven design</span><span class="idx-s status">Complete</span></a></li>
+      <li><a href="#irrigation"><span class="idx-n">05</span><span class="idx-t">Solar Irrigation System</span><span class="idx-d">Systems design, team lead</span><span class="idx-s status wip">In progress</span></a></li>
+      <li><a href="#guatemala"><span class="idx-n">06</span><span class="idx-t">Rainwater Harvesting, Guatemala</span><span class="idx-d">Field build under constraint</span><span class="idx-s status">Complete</span></a></li>
+    </ol>
+  </nav>
+</header>
+
+<!-- 01 -->
+<section class="sheet" id="access-control">
+  <div class="sheet-meta"><span class="label">Sheet <b>01</b> of 06</span><span class="label">Embedded hardware &amp; software</span></div>
+  <div class="sheet-grid">
+    <figure class="hero">
+      <button class="shot" style="aspect-ratio: 4 / 3" type="button" data-cap="Tool unit opened up: printed BuckID reader housing with status LEDs, controller enclosure with switched outlet and current sensor"><img src="img/ac_cover.jpg" alt="Purple 3D printed BuckID reader with red and green LEDs wired to an open black controller enclosure"></button>
+      <figcaption class="label">Reader housing and controller, opened up</figcaption>
+    </figure>
+    <div>
+      <h2>Makerspace Access Control</h2>
+      <p class="summary">An ID-swipe system that locks each shop tool to the students trained on it, in a makerspace serving more than 2,000 students.</p>
+      <dl class="tb">
+        <dt>Role</dt><dd>Originated, designed and built; leading rollout</dd>
+        <dt>Dates</dt><dd>May 2026 – present</dd>
+        <dt>Tools</dt><dd>ESP32-S3, RFID, Raspberry Pi, current sensing, Onshape, C/C++</dd>
+        <dt>Status</dt><dd><span class="status wip">In progress</span></dd>
+      </dl>
+      <div class="copy">
+        <div>
+          <h3 class="label">Problem</h3>
+          <p>Tool access wasn't restricted to trained users. That was a safety exposure on the higher-risk machines and a throughput problem, since staff had to gatekeep tools by hand. I identified the gap and proposed the system.</p>
+        </div>
+        <div>
+          <h3 class="label">What I did</h3>
+          <ul>
+            <li>Prototyped the sign-in on an Arduino, then moved to an ESP32 with an RFID reader. The first architecture relied on a USB Host FeatherWing (MAX3421E) that proved incompatible with the ESP32-WROOM-32D. I ruled out wiring and firmware on the bench before finding the cause.</li>
+            <li>Re-architected around an ESP32-S3 with native USB OTG using TinyUSB Host, which removed the external host controller entirely.</li>
+            <li>Added current sensing at each controlled outlet, so the system records actual tool run time as well as badge-ins.</li>
+            <li>Designed a Raspberry Pi hub that syncs the authorized-user list from Smartsheet and caches it at each tool, so tools keep working through a network outage.</li>
+            <li>Built the front-desk kiosk: students tap their BuckID to sign in, staff grant tool certifications in two taps, and a dashboard tracks visits, busy hours and tool time.</li>
+            <li>Led the bill of materials and component sourcing for the rollout.</li>
+          </ul>
+        </div>
+        <div class="result"><span class="label">Result</span><p>The sign-in kiosk is live at the front desk with a control panel for 10 tools, and tool reader rollout is underway. The usage data it collects now supports the department's funding requests, which was never part of the original scope.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="strip">
+    <div class="strip-head"><span class="label">Hardware, in order</span></div>
+    <ol>
+      <li><figure><button class="shot" type="button" data-cap="01 · Earliest sign-in prototype on Arduino"><img src="img/ac_breadboard.jpg" alt="Arduino and breadboard prototype with 3D printed parts" loading="lazy"></button><figcaption><b>01</b>Earliest sign-in prototype on Arduino</figcaption></figure></li>
+      <li><figure><button class="shot contain" type="button" data-cap="02 · Enclosure design, exploded view"><img src="img/ac_exploded.jpg" alt="Exploded CAD view of the red controller enclosure" loading="lazy"></button><figcaption><b>02</b>Enclosure design, exploded view</figcaption></figure></li>
+      <li><figure><button class="shot" type="button" data-cap="03 · Development bench: Pi hub, firmware, live message traffic"><img src="img/ac_bench.jpg" alt="Workbench with monitor, Raspberry Pi and laptop running serial monitor" loading="lazy"></button><figcaption><b>03</b>Development bench with live message traffic</figcaption></figure></li>
+      <li><figure><button class="shot" type="button" data-cap="04 · Controller internals: switched outlet, current sensor, ESP32"><img src="img/ac_internals.jpg" alt="Open enclosure showing outlet strip, current clamp and controller" loading="lazy"></button><figcaption><b>04</b>Internals: switched outlet, current sensor, ESP32</figcaption></figure></li>
+      <li><figure><button class="shot" type="button" data-cap="05 · Closed-up tool unit with campus ID reader"><img src="img/ac_deployed.jpg" alt="Orange 3D printed controller enclosure beside a BuckID card reader" loading="lazy"></button><figcaption><b>05</b>Closed-up tool unit with ID reader</figcaption></figure></li>
+    </ol>
+  </div>
+  <div class="strip software">
+    <div class="strip-head"><span class="label">Kiosk software</span></div>
+    <ol>
+      <li><figure><button class="shot contain" type="button" data-cap="Dashboard: visits, busiest hours, roster"><img src="img/ac_dashboard.jpg" alt="Kiosk dashboard showing visitor statistics and a bar chart" loading="lazy"></button><figcaption><b>A</b>Dashboard: visits, busy hours, roster</figcaption></figure></li>
+      <li><figure><button class="shot contain" type="button" data-cap="Staff granting tool certifications"><img src="img/ac_grant.jpg" alt="Grant Badge screen listing certified and available tools" loading="lazy"></button><figcaption><b>B</b>Staff grant tool certifications</figcaption></figure></li>
+      <li><figure><button class="shot contain" type="button" data-cap="Student cleared: waiver signed, certified tools shown"><img src="img/ac_cleared.jpg" alt="Cleared screen confirming waiver and listing certified tools" loading="lazy"></button><figcaption><b>C</b>Cleared: waiver signed, tools shown</figcaption></figure></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 02 -->
+<section class="sheet" id="garden-robot">
+  <div class="sheet-meta"><span class="label">Sheet <b>02</b> of 06</span><span class="label">Robotics &amp; controls</span></div>
+  <div class="sheet-grid">
+    <figure class="hero">
+      <button class="shot" style="aspect-ratio: 1 / 1" type="button" data-cap="Finished robot: kiwi drive with the lift arm mounted"><img src="img/rob_arm.jpg" alt="Finished robot with a wooden lift arm, omniwheels and controller"></button>
+      <figcaption class="label">Finished robot with lift arm</figcaption>
+    </figure>
+    <div>
+      <h2>Omnidirectional Garden Robot</h2>
+      <p class="summary">A kiwi-drive competition robot that placed 3rd of more than 60 teams with a perfect design score.</p>
+      <dl class="tb">
+        <dt>Role</dt><dd>Design team member</dd>
+        <dt>Dates</dt><dd>Feb – May 2025</dd>
+        <dt>Tools</dt><dd>Proteus controller, PID control, CAD</dd>
+        <dt>Status</dt><dd><span class="status">Complete</span></dd>
+      </dl>
+      <div class="copy">
+        <div>
+          <h3 class="label">Problem</h3>
+          <p>The course demanded precise maneuvering in a confined plot, where a two-wheel drive would spend much of its time repositioning.</p>
+        </div>
+        <div>
+          <h3 class="label">What I did</h3>
+          <ul>
+            <li>Generated three chassis concepts before committing: two wheels with skids and a mechanical arm, a three-wheel omnidirectional base, and a belt-driven lift. Each sketch calls out drive, sensing and actuation so the team could compare them on the same terms.</li>
+            <li>Converged on a kiwi drive: three omniwheels at 120°, which translates in any direction and rotates independently of heading.</li>
+            <li>Modeled the chassis, drivetrain and lift arm in CAD, then built the platform on a recycled plastic base with a wooden arm mechanism.</li>
+            <li>Ran PID control on the Proteus controller and tuned the loop against the robot's real mechanical response.</li>
+          </ul>
+        </div>
+        <div class="result"><span class="label">Result</span><p>3rd place out of more than 60 teams, with a 100/100 design score.</p></div>
+        <figure class="clip tall"><span class="label">Video</span><video src="img/vid_robot.mp4" poster="img/vid_robot.jpg" muted loop playsinline autoplay controls preload="metadata" aria-label="Robot driving the competition course and carrying a bucket with its arm"></video><figcaption>Part of a competition run: driving, turning in place and carrying the bucket with the lift arm.</figcaption></figure>
+      </div>
+    </div>
+  </div>
+  <div class="strip">
+    <div class="strip-head"><span class="label">Process, in order</span></div>
+    <ol>
+      <li><figure><button class="shot contain" type="button" data-cap="01 · Three chassis concepts, compared on drive, sensing and actuation"><img src="img/rob_sketches.jpg" alt="Hand sketches of three robot chassis concepts with labeled components" loading="lazy"></button><figcaption><b>01</b>Three chassis concepts</figcaption></figure></li>
+      <li><figure><button class="shot contain" type="button" data-cap="02 · CAD assembly: omniwheel base and lift arm"><img src="img/rob_render.jpg" alt="CAD assembly of the robot with omniwheels and lift arm" loading="lazy"></button><figcaption><b>02</b>CAD assembly: base and lift arm</figcaption></figure></li>
+      <li><figure><button class="shot" type="button" data-cap="03 · Built base platform on recycled plastic"><img src="img/rob_built.jpg" alt="Robot base with omniwheels and a controller in a clear case, held in hand" loading="lazy"></button><figcaption><b>03</b>Base platform, recycled plastic</figcaption></figure></li>
+      <li><figure><button class="shot" type="button" data-cap="04 · Competition day, 3rd of 60+ teams"><img src="img/rob_comp.jpg" alt="Team holding award certificates on stage at the Ohio State competition" loading="lazy"></button><figcaption><b>04</b>Competition day, 3rd of 60+</figcaption></figure></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 03 -->
+<section class="sheet" id="ballista">
+  <div class="sheet-meta"><span class="label">Sheet <b>03</b> of 06</span><span class="label">Mechanism design</span></div>
+  <div class="sheet-grid">
+    <figure class="hero">
+      <button class="shot" type="button" data-cap="Assembled turret: laser-cut arm on a printed ring-gear base"><img src="img/bal_built.jpg" alt="Laser-cut wooden ballista arm mounted on a red 3D printed geared base"></button>
+      <figcaption class="label">Laser-cut arm on a printed ring-gear base</figcaption>
+    </figure>
+    <div>
+      <h2>Aimable Ballista</h2>
+      <p class="summary">A joystick-aimed, Arduino-controlled launcher built from printed gears and laser-cut panels.</p>
+      <dl class="tb">
+        <dt>Role</dt><dd>Sole designer and builder</dd>
+        <dt>Dates</dt><dd>Aug – Dec 2025</dd>
+        <dt>Tools</dt><dd>Onshape, 3D printing, laser cutting, Arduino</dd>
+        <dt>Status</dt><dd><span class="status">Complete</span></dd>
+      </dl>
+      <div class="copy">
+        <div>
+          <h3 class="label">Problem</h3>
+          <p>Carry real spring load through printed parts while keeping the aiming axes smooth and repeatable under motor control.</p>
+        </div>
+        <div>
+          <h3 class="label">What I did</h3>
+          <ul>
+            <li>Modeled the full assembly in CAD, then ran the loop: print or cut a part, test the fit and load, find what the model got wrong, revise. That cycle ran for most of the semester.</li>
+            <li>Designed a printed gear train for the pan axis, a large ring gear driven by a pinion, so the turret aims under motor control. Getting printed teeth to mesh cleanly took several revisions.</li>
+            <li>Built the structure from PLA parts and laser-cut panels, revising geometry where parts deflected or tolerances stacked across the aiming joints.</li>
+            <li>Wired and programmed the controls myself: stepper and servo motors, joystick input, an LCD and LED indicators on an Arduino.</li>
+          </ul>
+        </div>
+        <div class="result"><span class="label">Result</span><p>A fully aimable, working launcher. It's the project that taught me a design is finished when the part can be made and still fits, which is later than when the model looks right.</p></div>
+        <figure class="clip tall"><span class="label">Video</span><video src="img/vid_ballista.mp4" poster="img/vid_ballista.jpg" muted loop playsinline autoplay controls preload="metadata" aria-label="Ballista turret rotating under joystick control"></video><figcaption>Aiming with the joystick: the ring gear pans the turret while the LCD walks through aim and confirm.</figcaption></figure>
+      </div>
+    </div>
+  </div>
+  <div class="strip">
+    <div class="strip-head"><span class="label">Process, in order</span></div>
+    <ol>
+      <li><figure><button class="shot contain" type="button" data-cap="01 · CAD: turret base, ring gear and pinion drive"><img src="img/bal_cad_turret.jpg" alt="Onshape assembly of the turret base with ring gear and pinion" loading="lazy"></button><figcaption><b>01</b>CAD: ring gear and pinion drive</figcaption></figure></li>
+      <li><figure><button class="shot" type="button" data-cap="02 · Printed gear pair during fit testing"><img src="img/bal_gears.jpg" alt="Green and grey 3D printed gears stacked for fit testing" loading="lazy"></button><figcaption><b>02</b>Printed gear pair, fit testing</figcaption></figure></li>
+      <li><figure><button class="shot" type="button" data-cap="03 · Control electronics on the bench: Arduino, LCD, joystick, servo"><img src="img/bal_electronics.jpg" alt="Arduino, breadboard, LCD, joystick and servo wired on a desk" loading="lazy"></button><figcaption><b>03</b>Control electronics on the bench</figcaption></figure></li>
+      <li><figure><button class="shot" type="button" data-cap="04 · Full system: joystick and display control"><img src="img/bal_system.jpg" alt="Ballista with control box showing an LCD, joystick held in hand" loading="lazy"></button><figcaption><b>04</b>Full system with joystick control</figcaption></figure></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 04 -->
+<section class="sheet" id="partition">
+  <div class="sheet-meta"><span class="label">Sheet <b>04</b> of 06</span><span class="label">Structures &amp; fabrication</span></div>
+  <div class="sheet-grid">
+    <figure class="hero">
+      <button class="shot" type="button" data-cap="Installed: A-frame legs on casters, clear panels between the power tools and the work tables"><img src="img/part_aframes.jpg" alt="Clear partition panels on aluminum A-frame legs with casters, wrapping around a column in the makerspace"></button>
+      <figcaption class="label">Installed, A-frame legs on casters</figcaption>
+    </figure>
+    <div>
+      <h2>Makerspace Partition</h2>
+      <p class="summary">A 50-foot mobile partition separating the power-tool zone from the rest of the makerspace, built for a fifth of the commercial quote.</p>
+      <dl class="tb">
+        <dt>Role</dt><dd>Sole designer and builder</dd>
+        <dt>Dates</dt><dd>Jun – Aug 2026</dd>
+        <dt>Tools</dt><dd>Onshape, 80/20 T-slot aluminum, 3D printing</dd>
+        <dt>Status</dt><dd><span class="status">Complete</span></dd>
+      </dl>
+      <div class="copy">
+        <div>
+          <h3 class="label">Problem</h3>
+          <p>The space needed a split between the dusty power tools, where safety glasses are required, and the clear table area, across 30 ft and 20 ft openings. A commercial mobile partition was quoted at about $1,500.</p>
+        </div>
+        <div>
+          <h3 class="label">What I did</h3>
+          <ul>
+            <li>Designed the system in CAD around 80/20 T-slot extrusion, with A-frame legs and casters for stability across the span.</li>
+            <li>Designed and 3D printed custom gussets for every frame joint.</li>
+            <li>Built the bill of materials around existing shop inventory and stock lengths, and reworked the design until it could be built mostly from material on hand.</li>
+          </ul>
+        </div>
+        <div class="result"><span class="label">Result</span><p>About $300 in materials against the $1,500 quote. Built and in use.</p></div>
+        <figure class="clip wide"><span class="label">Video</span><video src="img/vid_partition.mp4" poster="img/vid_partition.jpg" muted loop playsinline autoplay controls preload="metadata" aria-label="Partition section being rolled open and closed by one person"></video><figcaption>One person opening and closing a section on its casters.</figcaption></figure>
+      </div>
+    </div>
+  </div>
+  <div class="strip">
+    <div class="strip-head"><span class="label">Process, in order</span></div>
+    <ol>
+      <li><figure><button class="shot contain" type="button" data-cap="01 · CAD assembly, two-panel section"><img src="img/partition_cad.jpg" alt="Line-drawing CAD of a two-panel partition section on A-frame legs" loading="lazy"></button><figcaption><b>01</b>CAD assembly, two-panel section</figcaption></figure></li>
+      <li><figure><button class="shot contain" type="button" data-cap="02 · Panel configurations for the 30 ft and 20 ft runs"><img src="img/part_configs.jpg" alt="CAD of two partition run configurations" loading="lazy"></button><figcaption><b>02</b>Configurations for both runs</figcaption></figure></li>
+      <li><figure><button class="shot" type="button" data-cap="03 · Custom printed gussets at each frame joint"><img src="img/part_brackets.jpg" alt="Frame members with colored 3D printed gussets at the joints" loading="lazy"></button><figcaption><b>03</b>Printed gussets at each joint</figcaption></figure></li>
+      <li><figure><button class="shot" type="button" data-cap="04 · Frame sections assembled"><img src="img/part_assembled.jpg" alt="Aluminum T-slot partition frame sections laid out on the shop floor" loading="lazy"></button><figcaption><b>04</b>Frame sections assembled</figcaption></figure></li>
+      <li><figure><button class="shot" type="button" data-cap="05 · Base detail: printed joint plate, corner brackets and foam bumpers on the legs"><img src="img/part_base.jpg" alt="Close-up of the partition base with a printed plate, corner brackets and pink foam bumpers" loading="lazy"></button><figcaption><b>05</b>Base detail: joint plate and bumpers</figcaption></figure></li>
+      <li><figure><button class="shot" type="button" data-cap="06 · The full run in place along the shop"><img src="img/part_run.jpg" alt="Long run of clear partition panels on A-frame legs across the makerspace" loading="lazy"></button><figcaption><b>06</b>Full run in place</figcaption></figure></li>
+      <li><figure><button class="shot" type="button" data-cap="07 · In use: power tools behind the partition, open work tables in front"><img src="img/part_inuse.jpg" alt="Makerspace with work tables in front and the partition separating the power tool area behind" loading="lazy"></button><figcaption><b>07</b>In use, tools behind, tables in front</figcaption></figure></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 05 -->
+<section class="sheet" id="irrigation">
+  <div class="sheet-meta"><span class="label">Sheet <b>05</b> of 06</span><span class="label">Systems design &amp; leadership</span></div>
+  <div class="sheet-grid">
+    <figure class="hero">
+      <button class="shot contain" type="button" data-cap="Site layout: tubing runs, splitters and emitters across all 24 beds"><img src="img/irr_plan.jpg" alt="Irrigation site plan over an aerial photo with a legend and 24 numbered beds"></button>
+      <figcaption class="label">Site layout for all 24 beds</figcaption>
+    </figure>
+    <div>
+      <h2>Solar Irrigation System</h2>
+      <p class="summary">Solar-powered drip irrigation for the 24 container gardens at Ohio State's North Campus Community Garden.</p>
+      <dl class="tb">
+        <dt>Role</dt><dd>Project lead, team of 10–15</dd>
+        <dt>Dates</dt><dd>Sept 2025 – present</dd>
+        <dt>Tools</dt><dd>Electrical design, ESP controller, site layout, CAD</dd>
+        <dt>Status</dt><dd><span class="status wip">In progress</span></dd>
+      </dl>
+      <div class="copy">
+        <div>
+          <h3 class="label">Problem</h3>
+          <p>Campus sustainability staff asked Engineers for a Sustainable World to design and build irrigation for the garden's 24 container beds, which were watered by hand.</p>
+        </div>
+        <div>
+          <h3 class="label">What I did</h3>
+          <ul>
+            <li>Lead a team of 10 to 15 students meeting weekly, breaking the system into pieces people can own so they keep coming back.</li>
+            <li>Completed the electrical design: solar panel, charge controller, battery, ESP controller, relay and valve, with soil moisture sensing so zones open on measured conditions instead of a timer.</li>
+            <li>Produced the site layout for all 24 beds, routing tubing, splitters and emitters from a single spigot.</li>
+            <li>Sketched control-box concepts against a short list of goals: cheap, simple to build, weatherproof, and able to survive public handling.</li>
+            <li>Coordinated with OSU Facilities and am leading a grant application for funding.</li>
+          </ul>
+        </div>
+        <div class="result"><span class="label">Status</span><p>2025–26 was research and system selection. 2026–27 is design and build in the garden, with the grant application underway.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="strip">
+    <div class="strip-head"><span class="label">Process, in order</span></div>
+    <ol>
+      <li><figure><button class="shot contain" type="button" data-cap="01 · Control box concepts, with design goals"><img src="img/irr_sketches.jpg" alt="Pencil sketches of control box enclosure concepts with a list of goals" loading="lazy"></button><figcaption><b>01</b>Control box concepts and goals</figcaption></figure></li>
+      <li><figure><button class="shot contain" type="button" data-cap="02 · Electrical schematic"><img src="img/irr_schem.jpg" alt="Hand-drawn electrical schematic: solar panel, charge controller, battery, ESP, relay, valve" loading="lazy"></button><figcaption><b>02</b>Electrical schematic</figcaption></figure></li>
+      <li><figure><button class="shot contain" type="button" data-cap="03 · CAD site model of the garden"><img src="img/irr_cadsite.jpg" alt="CAD model of the garden site with beds and buildings" loading="lazy"></button><figcaption><b>03</b>CAD site model</figcaption></figure></li>
+      <li><figure><button class="shot" type="button" data-cap="04 · The garden today, watered by hand"><img src="img/irr_garden.jpg" alt="Community garden with metal container beds" loading="lazy"></button><figcaption><b>04</b>The garden today</figcaption></figure></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 06 -->
+<section class="sheet" id="guatemala">
+  <div class="sheet-meta"><span class="label">Sheet <b>06</b> of 06</span><span class="label">Field build</span></div>
+  <div class="sheet-grid">
+    <figure class="hero">
+      <button class="shot" type="button" data-cap="Completed conveyance into the storage tanks"><img src="img/guat_final.jpg" alt="Orange conveyance pipes running down a building wall into storage tanks"></button>
+      <figcaption class="label">Completed conveyance into storage</figcaption>
+    </figure>
+    <div>
+      <h2>Rainwater Harvesting, Guatemala</h2>
+      <p class="summary">A 15,000-liter rainwater system for a 240-member agricultural cooperative near Lake Atitlán.</p>
+      <dl class="tb">
+        <dt>Role</dt><dd>Senior-capstone team member</dd>
+        <dt>Dates</dt><dd>Jan – Apr 2026</dd>
+        <dt>Location</dt><dd>Sololá, Guatemala</dd>
+        <dt>Status</dt><dd><span class="status">Complete</span></dd>
+      </dl>
+      <div class="copy">
+        <div>
+          <h3 class="label">Problem</h3>
+          <p>The cooperative needed a reliable water supply for its fertilizer production. Our team designed the system in Columbus, then traveled to install it.</p>
+        </div>
+        <div>
+          <h3 class="label">What I did</h3>
+          <ul>
+            <li>Contributed to the system design and bill of materials, then worked the in-country build and installation.</li>
+            <li>The design called for 30° elbows at the tank connections. Only 45° elbows were available locally, so we switched to the alternate layout we had prepared and adjusted pipe runs on site.</li>
+            <li>The lesson I took: what you can actually buy where you're building is a design input.</li>
+          </ul>
+        </div>
+        <div class="result"><span class="label">Result</span><p>Supplies the cooperative's fertilizer production, with an estimated $6,400 to $12,800 in annual economic impact. It has collected water since installation.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="strip">
+    <div class="strip-head"><span class="label">On site, in order</span></div>
+    <ol>
+      <li><figure><button class="shot" type="button" data-cap="01 · Planning the gutter run on site"><img src="img/guat_team.jpg" alt="Team looking up at the roofline planning the gutter run" loading="lazy"></button><figcaption><b>01</b>Planning the gutter run</figcaption></figure></li>
+      <li><figure><button class="shot" type="button" data-cap="02 · Dry-fitting valve assemblies"><img src="img/guat_dryfit.jpg" alt="Pipe runs and valve assemblies laid out on the grass" loading="lazy"></button><figcaption><b>02</b>Dry-fitting valve assemblies</figcaption></figure></li>
+      <li><figure><button class="shot" type="button" data-cap="03 · Fitting couplings to the conveyance piping"><img src="img/guat_fitting.jpg" alt="Two team members fitting a coupling onto orange pipe" loading="lazy"></button><figcaption><b>03</b>Fitting couplings</figcaption></figure></li>
+      <li><figure><button class="shot" type="button" data-cap="04 · Installing tank fittings"><img src="img/guat_tank.jpg" alt="Team installing fittings on a storage tank" loading="lazy"></button><figcaption><b>04</b>Installing tank fittings</figcaption></figure></li>
+    </ol>
+  </div>
+</section>
+
+<footer class="end">
+  <span class="label">Zach Beckman · Mechanical Engineering, The Ohio State University</span>
+  <span class="label">Updated November 2026</span>
+</footer>
+
+</div>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Enlarged image">
+  <img id="lb-img" alt="">
+  <div class="lb-bar"><span id="lb-cap"></span><button type="button" id="lb-close">Close</button></div>
+</div>
+
+<script>
+(function () {
+  var lb = document.getElementById('lb');
+  var img = document.getElementById('lb-img');
+  var cap = document.getElementById('lb-cap');
+  var closeBtn = document.getElementById('lb-close');
+  var opener = null;
+
+  function open(btn) {
+    var src = btn.querySelector('img');
+    if (!src) return;
+    opener = btn;
+    img.src = src.currentSrc || src.src;
+    img.alt = src.alt || '';
+    cap.textContent = btn.getAttribute('data-cap') || '';
+    lb.hidden = false;
+    document.documentElement.style.overflow = 'hidden';
+    closeBtn.focus();
+  }
+  function close() {
+    lb.hidden = true;
+    img.removeAttribute('src');
+    document.documentElement.style.overflow = '';
+    if (opener) opener.focus();
+  }
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.shot');
+    if (btn) { open(btn); return; }
+    if (!lb.hidden && (e.target === lb || e.target === closeBtn)) close();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !lb.hidden) close();
+  });
+})();
+</script>
+
+</body>
+</html>
